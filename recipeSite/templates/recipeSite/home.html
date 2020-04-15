@@ -1,0 +1,29 @@
+{%extends "recipeSite/base.html"%}
+{%block content%}
+
+	{%for post in posts%}
+		<article class="media content-section">
+		  <div class="media-body">
+			<div class="article-metadata">
+			  <a class="mr-2" href="#">{{ post.author }}</a>
+			  <small class="text-muted">{{ post.datePosted|date:"H:i d F, Y " }}</small>
+			</div>
+			<h1><a class="article-title" href="#">{{ post.title }}</a></h1>
+			<h3>Ingridientes</h3>
+                <ul>
+                    {% for ingredients in post.ingredientList %}
+                        <li class="article-content">{{ingredients}}</li>
+                    {%endfor%}
+                </ul>
+			<h3>Instruções</h3>
+			<ul>
+                {% for instructions in post.instructionList %}
+                    <li class="article-content">{{instructions}}</li>
+                {%endfor%}
+            </ul>
+		  </div>
+		</article>
+
+	{%endfor%}
+
+{%endblock content%}
