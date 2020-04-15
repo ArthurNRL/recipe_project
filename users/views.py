@@ -4,11 +4,14 @@ from django.contrib import messages
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
+            form.save()
             username = form.cleaned_data.get('username')
-            messages.success(request,f"USer created for {username}!")
+            messages.success(request,f"User created for {username}!")
             return redirect('recipeHome')
+        else:
+            messages.info(request,f"ERROR")
     else:
         form = UserCreationForm()
     return render(request,'users/register.html',{'form': form})
