@@ -1,0 +1,7 @@
+{%extends "recipeSite/base.html"%}
+{% load crispy_forms_tags %}
+{%block content%}
+<h2>You have been logged out</h2>
+    <div><a class = 'text-muted ml-2' href="{% url 'signin' %}">Log back in</a> </div>
+
+{%endblock content%}
