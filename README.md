@@ -5,6 +5,7 @@ It's a recipe sharing site.
 
 Up to now learned how Django works and how it handles:
 - User registration;
+- User authentication;
 - Python code in html templates;
 - Filters;
 - Models;
