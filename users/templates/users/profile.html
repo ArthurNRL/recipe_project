@@ -1,14 +1,18 @@
 {%extends "recipeSite/base.html"%}
-{% load crispy_forms_tags %}
+{% load static %}
 {%block content%}
  <div class="content-section">
       <div class="media">
-        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+        <a href="{% url 'profile' %}" style="color: #333333; text-decoration: none;"> <img class="rounded-circle account-img" src="{% if user.profile.image.url %}{{ user.profile.image.url }}{% endif %}">
         <div class="media-body">
-          <h2 class="account-heading">{{ user.username }}</h2>
+          <h2 class="account-heading">{{ user.username }}</a></h2>
           <p class="text-secondary">{{ user.email }}</p>
         </div>
+          <div class="btn-group">
+              <a href="{% url 'profileEdit' %}"><button type="button" class="btn btn-info" style="background-color: #9bbdd1"><img src="{% static 'recipeSite/images/edit.png' %}" title="Edit profile" style="height: 22px"></button></a>
+              <a href="{% url 'discardPic' %}"><button type="button" class="btn btn-info" style="background-color: #9bbdd1"><img src="{% static 'recipeSite/images/discard.png' %}" title="Discart image" style="height: 22px"></button></a>
+          </div>
       </div>
-      <!-- FORM HERE -->
+      {% block profileContent %}{% endblock %}
     </div>
 {%endblock content%}

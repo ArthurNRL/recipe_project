@@ -1,0 +1,41 @@
+{% extends "recipeSite/base.html" %}
+{% load static %}
+{% block content %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+            <div class="media-body">
+                <div class="article-metadata row">
+                    <div class="col">
+                        <a class="mr-2" href="#">{{ object.author }}</a>
+                        <small class="text-muted">{{ object.datePosted|date:"H:i d F, Y " }}</small>
+                    </div>
+                    <div class="col" align="right">
+                        {% if object.author == user %}
+                            <div class="btn-group" align="right">
+                              <a href="{% url 'postUpdate' object.id %}"><button type="button" class="btn btn-primary" style="background-color: #9bbdd1"><img src="{% static 'recipeSite/images/edit.png' %}" title="Edit post" style="height: 20px"></button></a>
+                              <a href="{% url 'postDelete' object.id %}"><button type="button" class="btn btn-danger" ><img src="{% static 'recipeSite/images/discard.png' %}" title="Discart post" style="height: 20px"></button></a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+
+
+                </div>
+
+                <h1 class="article-title" href="#">{{ object.title }}</h1>
+                <h3>Ingredientes</h3>
+                <ul>
+                    {% for ingredients in object.ingredientList %}
+                        <li class="article-content">{{ ingredients }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Instruções</h3>
+                <ul>
+                    {% for instructions in object.instructionList %}
+                        <li class="article-content">{{ instructions }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </article>
+
+{% endblock content %}

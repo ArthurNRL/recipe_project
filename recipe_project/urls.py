@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', include('recipeSite.urls')),
     path('profile/', users_views.profile, name='profile'),
+    path('profile/edit/', users_views.profileEdit, name='profileEdit'),
+    path('profile/discardPic/', users_views.discardPic, name='discardPic'),
     path('signup/', users_views.register, name='register'),
     path('signin/', auth_views.LoginView.as_view(template_name='users/login.html', redirect_authenticated_user=True), name='signin'),
     path('signout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='signout')
