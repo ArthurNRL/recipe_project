@@ -1,8 +1,7 @@
-{%extends "recipeSite/base.html"%}
+{% extends "recipeSite/base.html" %}
 {% load crispy_forms_tags %}
-{%block content%}
-
-	<div class="content-section">
+{% block content %}
+    <div class="content-section">
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
@@ -10,14 +9,13 @@
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Sign In</button>
+                <button class="btn btn-outline-info" type="submit">Entrar</button>
             </div>
-            <div class="border-top pt-3">
+            <div class="border-top pt-1 mt-2">
                 <small class="text-muted">
-                    <a class = "ml-2" href="{% url 'register' %}">Need an account?</a>
+                    <a class="ml-2" href="{% url 'register' %}">Precisa de uma conta?</a>
                 </small>
             </div>
         </form>
     </div>
-
-{%endblock content%}
+{% endblock content %}

@@ -3,7 +3,9 @@ from .models import Post, Ingredients, Instructions
 
 
 class postCreateForm(forms.ModelForm):
-    title = forms.CharField(max_length=100, required=True)
+    title = forms.CharField(max_length=60, required=True)
+    description = forms.CharField(max_length=150)
+    picture = forms.ImageField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -11,42 +13,47 @@ class postCreateForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title']
+        fields = ['title', 'description', 'picture']
 
     def clean(self):
-        ingredients = set()
+        ingredients = []
         i = 0
         field_name = f'ingredients{i}'
         duplicate = False
-        duplicateFieldName = []
+        duplicateFieldName = set()
         while self.data.get(field_name):
             ingredient = self.data[field_name]
             if ingredient in ingredients:
+                duplicateFieldName.add(field_name)
                 duplicate = True
-            else:
-                ingredients.add(ingredient)
+            ingredients.append(ingredient)
             i += 1
             field_name = f'ingredients{i}'
         self.cleaned_data["ingredients"] = ingredients
-        instructions = set()
+        instructions = []
         i = 0
         field_name = f'instructions{i}'
         while self.data.get(field_name):
             instruction = self.data[field_name]
             if instruction in instructions:
-                duplicateFieldName.append(field_name)
+                duplicateFieldName.add(field_name)
+                duplicateFieldName.add(list(self.data.keys())[list(self.data.values()).index(instruction)])
                 duplicate = True
-            else:
-                instructions.add(instruction)
+            instructions.append(instruction)
             i += 1
             field_name = f'instructions{i}'
         self.cleaned_data["instructions"] = instructions
+        # self.cleaned_data['picture']
+        print (self.cleaned_data, self.data)
         if duplicate:
-            print(self.cleaned_data["instructions"])
-            print(self.cleaned_data["ingredients"])
             self.generateFields(self.cleaned_data["ingredients"], self.cleaned_data["instructions"])
-
-            self.add_error('instructions0', 'Duplicado')
+            print(duplicateFieldName)
+            for field in duplicateFieldName:
+                if field.find('ingredients') != -1:
+                    warning = 'Ingredientes repetidos'
+                elif field.find('instructions') != -1:
+                    warning = 'Instrução repetida'
+                self.add_error(field, warning)
 
     def save(self, **kwargs):
         post = self.instance
@@ -68,11 +75,11 @@ class postCreateForm(forms.ModelForm):
 
     def generateFields(self, ingredients, instructions):
         self.fields = {}
-        self.fields['title']= forms.CharField(max_length=100, required=True)
-        print(ingredients, instructions)
+        self.fields['title']= forms.CharField(max_length=60, required=True)
+        self.fields['description'] = forms.CharField(max_length=150)
+        self.fields['picture'] = forms.ImageField(required=False, )
         # Gerar campos de ingredientes
         self.fields['ingredients0'] = forms.CharField(max_length=100, label='Ingredientes', required=True)
-        # ingredients = Ingredients.objects.filter(post=self.instance)
         i = 0
         for i in range(len(ingredients) + 1):
             if i == 0:
@@ -91,13 +98,9 @@ class postCreateForm(forms.ModelForm):
             except:
                 self.initial[field_name] = ''
             # create an extra blank field
-        if not self.initial['ingredients0'] == '':
-            field_name = f'ingredients{i + 1}'
-            self.fields[field_name] = forms.CharField(required=False, label='')
 
         # Gerar campos de instrucoes
         self.fields['instructions0'] = forms.CharField(max_length=100, label='Instruções', required=True)
-        # instructions = Instructions.objects.filter(post=self.instance)
         i = 0
         for i in range(len(instructions) + 1):
             if i == 0:
@@ -116,10 +119,6 @@ class postCreateForm(forms.ModelForm):
             except:
                 self.initial[field_name] = ''
             # create an extra blank field
-        if not self.initial['instructions0'] == '':
-            field_name = f'instructions{i + 1}'
-            self.fields[field_name] = forms.CharField(required=False, label='')
-        print(self.fields)
 
 class postUpdateForm(forms.ModelForm):
     title = forms.CharField(max_length=100)

@@ -2,11 +2,18 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from PIL import Image
 
-# TODO add post images
+
+# TODO add time
+# TODO add portion
+# todo add grupos alimentares
+# todo instrumentos
 
 class Post(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=60)
+    description = models.CharField(max_length=150)
+    picture = models.ImageField(default='logo.png', upload_to='post_pics')
     datePosted = models.DateTimeField(default = timezone.now)
     author = models.ForeignKey(User, on_delete = models.DO_NOTHING)
 
@@ -29,7 +36,6 @@ class Post(models.Model):
 class Ingredients(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     ingredients = models.TextField()
-
 
 class Instructions(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

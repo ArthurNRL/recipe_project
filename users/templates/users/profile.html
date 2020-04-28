@@ -1,18 +1,34 @@
-{%extends "recipeSite/base.html"%}
+{% extends "recipeSite/base.html" %}
 {% load static %}
-{%block content%}
- <div class="content-section">
-      <div class="media">
-        <a href="{% url 'profile' %}" style="color: #333333; text-decoration: none;"> <img class="rounded-circle account-img" src="{% if user.profile.image.url %}{{ user.profile.image.url }}{% endif %}">
-        <div class="media-body">
-          <h2 class="account-heading">{{ user.username }}</a></h2>
-          <p class="text-secondary">{{ user.email }}</p>
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+            <a href="{% url 'userPosts' user.username %}" style="color: #333333; text-decoration: none;"> <img
+                    class="rounded-circle account-img"
+                    src="{% if profile.image.url %}{{ profile.image.url }}{% endif %}">
+                <div class="media-body">
+                    <h2 class="account-heading">Receitas de
+                {{ profile.user }}</a></h2>
+            {% if user == profile.user %}
+                <p class="text-secondary">{{ user.email }}</p>
+            {% endif %}
         </div>
-          <div class="btn-group">
-              <a href="{% url 'profileEdit' %}"><button type="button" class="btn btn-info" style="background-color: #9bbdd1"><img src="{% static 'recipeSite/images/edit.png' %}" title="Edit profile" style="height: 22px"></button></a>
-              <a href="{% url 'discardPic' %}"><button type="button" class="btn btn-info" style="background-color: #9bbdd1"><img src="{% static 'recipeSite/images/discard.png' %}" title="Discart image" style="height: 22px"></button></a>
-          </div>
-      </div>
-      {% block profileContent %}{% endblock %}
+        {% if user == profile.user %}
+            <div class="btn-group">
+                <a href="{% url 'profileEdit' %}">
+                    <button type="button" class="btn btn-info" style="background-color: #9bbdd1"><img
+                            src="{% static 'recipeSite/images/edit.png' %}" title="Edit profile" style="height: 22px">
+                    </button>
+                </a>
+                <a href="{% url 'discardPic' %}">
+                    <button type="button" class="btn btn-info" style="background-color: #9bbdd1"><img
+                            src="{% static 'recipeSite/images/discard.png' %}" title="Discard image"
+                            style="height: 22px">
+                    </button>
+                </a>
+            </div>
+        {% endif %}
     </div>
-{%endblock content%}
+    {% block profileContent %}{% endblock %}
+    </div>
+{% endblock content %}
