@@ -56,8 +56,8 @@ ul {
 .post-img {
     text-align: center;
     max-width: 100%;
-    margin: auto;
-    display: inline;
+    margin-left: auto;
+    display: table-cell;
 }
 
 .card-img-top {

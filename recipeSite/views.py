@@ -1,10 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
+from django.http import HttpResponseRedirect
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, View, FormView
+from django.views.generic.edit import SingleObjectMixin
 from .models import Post
-from users.models import Profile
-from .forms import postUpdateForm, postCreateForm
+from users.models import Profile, Favorites
+from django.urls import reverse
+from .forms import postUpdateForm, postCreateForm, favoriteForm
 
 
 class postListView(ListView):
@@ -21,21 +24,68 @@ class userListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        print('query')
-        return Post.objects.filter(author=user).order_by('-datePosted')
+        self.user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=self.user).order_by('-datePosted')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs.get('username'))
-        context['profile'] = Profile.objects.get(user=user)
+        context['profile'] = Profile.objects.get(user=self.user)
         return context
 
+class userFavoritesListView(ListView):
+    model = Post
+    template_name = 'users/userPosts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        self.user = get_object_or_404(User, username=self.request.user)
+        favorites = Favorites.objects.filter(user=self.user)
+        return Post.objects.filter(id=favorites.post)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = Profile.objects.get(user=self.user)
+        return context
+
+class postDetail(View):
+    def get(self, request, *args, **kwargs):
+        view = postDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = postFavorited.as_view()
+        return view(request, *args, **kwargs)
 
 class postDetailView(DetailView):
     model = Post
     template_name = 'recipeSite/postDetail.html'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = favoriteForm()
+        context['favorite'] = False
+        if(self.request.user.is_authenticated):
+            self.profile = Profile.objects.get(user=self.request.user)
+            if (self.profile in self.object.profile_set.all()):
+                context['favorite'] = True
+        return context
+
+class postFavorited(LoginRequiredMixin ,DetailView):
+    model = Post
+    template_name = 'recipeSite/postDetail.html'
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('signin'))
+        self.object = self.get_object()
+        self.profile = Profile.objects.get(user=self.request.user)
+        if (self.profile in self.object.profile_set.all()):
+            self.profile.favoritePosts.remove(self.object)
+        else:
+            self.profile.favoritePosts.add(self.object)
+        return HttpResponseRedirect(reverse('postDetail', kwargs={'pk': self.object.id}))
 
 class postCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -50,7 +100,6 @@ class postCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-
 class postUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = postCreateForm
@@ -62,7 +111,6 @@ class postUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
-
 class postDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     success_url = '/'
@@ -72,7 +120,6 @@ class postDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
-
 
 def about(request):
     return render(request, 'recipeSite/about.html', {'title': 'About'})

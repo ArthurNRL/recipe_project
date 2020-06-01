@@ -1,7 +1,7 @@
 {% extends "recipeSite/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="content-section">
+    <div class="content-section" style="width: 30%; margin-left: 35%">
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
@@ -9,7 +9,8 @@
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Entrar</button>
+                <button class="btn btn-outline-info mr-2" type="submit">Entrar</button>
+                <a href="{% url 'passwordReset' %}">Esqueceu sua senha?</a>
             </div>
             <div class="border-top pt-1 mt-2">
                 <small class="text-muted">

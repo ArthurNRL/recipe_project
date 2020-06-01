@@ -22,13 +22,26 @@ from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-	path('', include('recipeSite.urls')),
+    path('', include('recipeSite.urls')),
     path('profile/', users_views.profile, name='profile'),
     path('profile/edit/', users_views.profileEdit, name='profileEdit'),
     path('profile/discardPic/', users_views.discardPic, name='discardPic'),
     path('signup/', users_views.register, name='register'),
-    path('signin/', auth_views.LoginView.as_view(template_name='users/login.html', redirect_authenticated_user=True), name='signin'),
-    path('signout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='signout')
+    path('signin/', auth_views.LoginView.as_view(template_name='users/login.html', redirect_authenticated_user=True),
+         name='signin'),
+    path('signout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='signout'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='users/password_reset.html'),
+         name='passwordReset'),
+    path('password-reset/done/',
+         auth_views.PasswordChangeDoneView.as_view(template_name='users/password_reset_done.html',),
+         name='password_reset_done'),
+    path('password-reset/confirm/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(template_name='users/password_confirm.html'),
+         name='password_reset_confirm'),
+    path('password-reset-complete/',
+         auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
+         name='password_reset_complete'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,26 +4,40 @@
         <article class="media content-section">
             <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
             <div class="media-body">
-                <div class="article-metadata row">
-                    <div class="col" style="vertical-align: middle">
-                        <span style="vertical-align: middle">
-                            <a class="mr-2" href="{% url 'userPosts' object.author.username %}">{{ object.author }}</a>
+                <div class="article-metadata row pb-3 mb-1">
+                    <div class="col py-1" >
+                            <a class="mr-2 " href="{% url 'userPosts' object.author.username %}">{{ object.author }}</a>
                             <small class="text-muted">{{ object.datePosted|date:"H:i d F, Y " }}</small>
-                        </span>
                     </div>
                     <div class="col" align="right">
                         {% if object.author == user %}
-                            <div class="btn-group" align="right">
+                            <div class="btn-group">
                               <a href="{% url 'postUpdate' object.id %}" class="btn btn-primary"><img src="{% static 'recipeSite/images/edit.png' %}" title="Edit post" style="height: 20px"></a>
                               <a href="{% url 'postDelete' object.id %}" class="btn btn-danger delete"><img src="{% static 'recipeSite/images/discard.png' %}" title="Discard post" style="height: 20px"></a>
+                            </div>
+                        {% else %}
+                            <div class="btn-group">
+                                <form method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary" type="submit">
+                                        {% if favorite %}
+                                            <img src="{% static 'recipeSite/images/hearted.png' %}" title="Favorite post" style="height: 20px">
+                                        {% else %}
+                                            <img src="{% static 'recipeSite/images/heart.png' %}" title="Unfavorite post" style="height: 20px">
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                <a href="{# {%  url 'postDelete' object.id  %} #}" class="btn btn-primary"><img src="{% static 'recipeSite/images/add.png' %}" title="Discard post" style="height: 20px"></a>
                             </div>
                         {% endif %}
                     </div>
 
                 </div>
 
-                <h1 class="article-title" href="#">{{ object.title }}</h1>
-                <img class="post-img" src="{{ object.picture.url }}" style=" " >
+                <h1 class="article-title">{{ object.title }}</h1>
+                <div style="text-align: center"><img class="post-img" src="{{ object.picture.url }}"></div>
+                <h3>Descrição</h3>
+                {{ object.description }}
                 <h3>Ingredientes</h3>
                 <ul>
                     {% for ingredients in object.ingredientList %}

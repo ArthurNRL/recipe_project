@@ -1,6 +1,12 @@
 from django import forms
 from .models import Post, Ingredients, Instructions
+from users.models import Favorites
 
+class favoriteForm(forms.ModelForm):
+    post = forms.IntegerField(required=False)
+    class Meta:
+        model = Favorites
+        fields = ['post']
 
 class postCreateForm(forms.ModelForm):
     title = forms.CharField(max_length=60, required=True)
@@ -54,6 +60,7 @@ class postCreateForm(forms.ModelForm):
                 elif field.find('instructions') != -1:
                     warning = 'Instrução repetida'
                 self.add_error(field, warning)
+        return self.cleaned_data
 
     def save(self, **kwargs):
         post = self.instance
