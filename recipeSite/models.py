@@ -3,12 +3,11 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from PIL import Image
-
-
 # TODO add time
 # TODO add portion
 # todo add grupos alimentares
 # todo instrumentos
+
 
 class Post(models.Model):
     title = models.CharField(max_length=60)
@@ -16,6 +15,7 @@ class Post(models.Model):
     picture = models.ImageField(default='logo.png', upload_to='post_pics')
     datePosted = models.DateTimeField(default = timezone.now)
     author = models.ForeignKey(User, on_delete = models.DO_NOTHING)
+    original = models.ForeignKey('self', on_delete=models.SET_NULL, default='', null=True)
 
     def get_absolute_url(self):
         return reverse('postDetail', kwargs={'pk': self.pk})

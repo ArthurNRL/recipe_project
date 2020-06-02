@@ -134,3 +134,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.1']

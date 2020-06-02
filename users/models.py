@@ -2,25 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
 from os import remove
+from django.utils import timezone
 from django.urls import reverse
 from recipeSite.models import Post
 
 # Create your models here.
-class Favorites(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def get_absolute_url(self):
-        return reverse('postDetail', kwargs={'pk': self.post.id})
-
-    def isFavorite(self):
-        return True
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='logo.png', upload_to='profile_pics')
     favoritePosts = models.ManyToManyField(Post, blank=True, null=True)
+    dateJoined = models.DateTimeField(default = timezone.now)
+
     def defaultImage(self):
         if not self.image == 'logo.png':
             remove(self.image.path)

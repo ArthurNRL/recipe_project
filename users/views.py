@@ -11,7 +11,6 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
             messages.success(request, f"Sua conta foi criada!")
             return redirect('signin')
         else:

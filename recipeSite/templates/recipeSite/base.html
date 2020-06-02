@@ -57,6 +57,8 @@
                 <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'postCreate' %}">Nova Receita</a>
                     <a class="dropdown-item" href="{% url 'userPosts' user.username %}">Perfil</a>
+                    <a class="dropdown-item" href="{% url 'userFavorites' %}">Favoritos</a>
+                    <a class="dropdown-item" href="{% url 'userBook' %}">Seu livro de receitas</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'signout' %}">Logout</a>
                 </div>

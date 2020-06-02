@@ -7,11 +7,11 @@
                     class="rounded-circle account-img"
                     src="{% if profile.image.url %}{{ profile.image.url }}{% endif %}">
                 <div class="media-body">
-                    <h2 class="account-heading">Receitas de
-                {{ profile.user }}</a></h2>
-            {% if user == profile.user %}
-                <p class="text-secondary">{{ user.email }}</p>
-            {% endif %}
+                    {% if title %}
+                        <h2 class="account-heading">{{title}}</a></h2>
+                    {% else %}
+                        <h2 class="account-heading">Receitas de {{ profile.user }}</a></h2>
+                    {% endif %}
         </div>
         {% if user == profile.user %}
             <div class="btn-group">

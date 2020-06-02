@@ -1,11 +1,10 @@
 from django import forms
 from .models import Post, Ingredients, Instructions
-from users.models import Favorites
 
 class favoriteForm(forms.ModelForm):
     post = forms.IntegerField(required=False)
     class Meta:
-        model = Favorites
+        model = Post
         fields = ['post']
 
 class postCreateForm(forms.ModelForm):
@@ -126,13 +125,3 @@ class postCreateForm(forms.ModelForm):
             except:
                 self.initial[field_name] = ''
             # create an extra blank field
-
-class postUpdateForm(forms.ModelForm):
-    title = forms.CharField(max_length=100)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Post
-        fields = ['title']

@@ -3,11 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, View, FormView
-from django.views.generic.edit import SingleObjectMixin
 from .models import Post
-from users.models import Profile, Favorites
+from users.models import Profile
 from django.urls import reverse
-from .forms import postUpdateForm, postCreateForm, favoriteForm
+from .forms import postCreateForm, favoriteForm
 
 
 class postListView(ListView):
@@ -40,13 +39,15 @@ class userFavoritesListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        self.user = get_object_or_404(User, username=self.request.user)
-        favorites = Favorites.objects.filter(user=self.user)
-        return Post.objects.filter(id=favorites.post)
+        self.profile = Profile.objects.get(user=self.request.user)
+        favorites = self.profile.favoritePosts.all()
+        print(Post.objects.filter(profile=self.profile))
+        return Post.objects.filter(profile=self.profile)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = Profile.objects.get(user=self.user)
+        context['profile'] = Profile.objects.get(user=self.request.user)
+        context['title'] = 'Meus favoritos'
         return context
 
 class postDetail(View):
@@ -64,7 +65,7 @@ class postDetailView(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = favoriteForm()
+        # context['form'] = favoriteForm()
         context['favorite'] = False
         if(self.request.user.is_authenticated):
             self.profile = Profile.objects.get(user=self.request.user)
@@ -120,6 +121,28 @@ class postDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+class addToBookView(LoginRequiredMixin, FormView):
+    form_class = postCreateForm
+
+class userBookListView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'users/userPosts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+
+    def get_queryset(self):
+        self.profile = Profile.objects.get(user=self.request.user)
+        favorites = self.profile.favoritePosts.all()
+        print(Post.objects.filter(profile=self.profile))
+        return Post.objects.filter(profile=self.profile)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = Profile.objects.get(user=self.request.user)
+        context['title'] = 'Meu livro de receitas'
+        return context
 
 def about(request):
     return render(request, 'recipeSite/about.html', {'title': 'About'})
