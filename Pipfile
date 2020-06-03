@@ -11,6 +11,7 @@ Django = "==3.0.4"
 Pillow = "==7.1.2"
 django-crispy-forms = "*"
 gunicorn = "*"
+django-storages = "*"
 
 [requires]
 python_version = "3.8"
