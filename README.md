@@ -14,4 +14,6 @@ Up to now learned how Django works and how it handles:
 - User authentication;
 - Javascript/jQuery;
 - Dynamic Forms;
-- Pagination.
+- Pagination;
+- Heroku;
+- AWS S3.
